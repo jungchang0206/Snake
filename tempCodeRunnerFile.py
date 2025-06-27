@@ -1,0 +1,1 @@
+        # Get the current state representation for the AI
