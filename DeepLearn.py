@@ -5,8 +5,6 @@ import random
 from collections import deque
 import numpy as np
 from snake import SnakeGame
-import os
-import pickle
 
 class DQN(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
@@ -74,25 +72,13 @@ def train():
     action_size = 3  # [straight, right, left]
     agent = DQNAgent(state_size, action_size)
     batch_size = 64
-    episodes = 1000
-
-    MODEL_PATH = 'Snake/snake_dqn.pth'
-    EPSILON_PATH = 'Snake/epsilon.pkl'
-
-    # Load model if it exists
-    if os.path.exists(MODEL_PATH):
-        agent.model.load_state_dict(torch.load(MODEL_PATH))
-        print("Loaded existing model weights.")
-    if os.path.exists(EPSILON_PATH):
-        with open(EPSILON_PATH, 'rb') as f:
-            agent.epsilon = pickle.load(f)
-        print("Loaded epsilon value.")
-
+    episodes = 35
+    
     for e in range(episodes):
         state = game.reset()
         total_reward = 0
         done = False
-
+        
         while not done:
             # Get action
             action_idx = agent.act(state)
@@ -110,15 +96,12 @@ def train():
             
             if done:
                 print(f"Episode: {e}/{episodes}, Score: {score}, Epsilon: {agent.epsilon:.2f}")
-                # Save after each episode
-                torch.save(agent.model.state_dict(), MODEL_PATH)
-                with open(EPSILON_PATH, 'wb') as f:
-                    pickle.dump(agent.epsilon, f)
                 break
-
-        agent.replay(batch_size)
+                
+            agent.replay(batch_size)
             
     return agent
 
 if __name__ == '__main__':
     agent = train()
+    torch.save(agent.model.state_dict(), 'snake_dqn.pth')

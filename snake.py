@@ -16,7 +16,7 @@ BLUE = (0, 0, 255)
 
 # Game parameters
 BLOCK_SIZE = 20
-SPEED = 10 
+SPEED = 20
 
 class SnakeGame:
     def __init__(self, width=640, height=480):
@@ -47,7 +47,7 @@ class SnakeGame:
                 return food
     
     def _get_state(self):
-        # Get the current state representation for the AI
+        # Get the current state representation
         head = self.snake[0]
         
         # Directions: [straight, right, left] relative to current direction
@@ -125,7 +125,7 @@ class SnakeGame:
         # 3. Check if game over
         reward = 0
         game_over = False
-        if self._is_collision() or self.frame_iteration > 100*len(self.snake):
+        if self._is_collision():
             game_over = True
             reward = -10
             return reward, game_over, self.score
